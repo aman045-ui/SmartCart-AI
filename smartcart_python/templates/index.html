@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container app-layout">
+    <!-- Left Sidebar: Controls & Query Selection -->
+    <aside class="sidebar">
+        <div class="panel filter-panel">
+            <h3>Explore Products</h3>
+            <div class="form-group">
+                <label for="searchInput">Search Catalog</label>
+                <input type="text" id="searchInput" placeholder="Type headphones, coffee, fitness..." class="input-control">
+            </div>
+
+            <div class="form-group">
+                <label for="categorySelect">Category Filter</label>
+                <select id="categorySelect" class="input-control">
+                    <option value="all">All Categories</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}">{{ cat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="pipeline-summary-box">
+                <h4>Pipeline Info</h4>
+                <ul class="meta-list">
+                    <li><strong>Algorithm:</strong> TF-IDF + Cosine Sim</li>
+                    <li><strong>Vocabulary Size:</strong> {{ model_meta.vocabulary_size if model_meta else 'Dynamic' }}</li>
+                    <li><strong>Sparsity:</strong> {{ model_meta.matrix_sparsity_percent if model_meta else '95.2' }}%</li>
+                    <li><strong>Self-Exclusion:</strong> Enabled</li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Column: Catalog & Recommendations -->
+    <div class="main-column">
+        <!-- Selected Product & Recommendations Section -->
+        <section id="recommendationSection" class="recommendation-section" style="display: none;">
+            <div class="section-header">
+                <div>
+                    <span class="badge-accent">Active Machine Learning Inference</span>
+                    <h2>Recommendations for: <span id="targetProductTitle" class="highlight-text">Select a product</span></h2>
+                </div>
+                <button id="closeRecBtn" class="btn-secondary">Close View</button>
+            </div>
+
+            <div class="target-card" id="targetProductDetails">
+                <!-- Target product info injected dynamically -->
+            </div>
+
+            <h3 class="section-subheading">Top 5 Content-Based Recommendations (Cosine Similarity)</h3>
+            <div id="recommendationsGrid" class="recommendations-grid">
+                <!-- 5 recommendations injected here -->
+            </div>
+        </section>
+
+        <!-- Product Catalog Grid -->
+        <section class="catalog-section">
+            <div class="section-header">
+                <div>
+                    <h2>Product Catalog</h2>
+                    <p class="subtitle">Click <strong>"Get ML Recommendations"</strong> on any product to trigger the Cosine Similarity pipeline.</p>
+                </div>
+                <div class="catalog-counter">
+                    <span id="productCount">Loading...</span> products
+                </div>
+            </div>
+
+            <div id="catalogGrid" class="catalog-grid">
+                <!-- Products loaded asynchronously via /api/products -->
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

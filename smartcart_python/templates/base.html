@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SmartCart AI – Recommendation Engine{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_static or '/static/css/style.css' }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="/" class="brand-logo">
+                <span class="logo-icon">🛒</span>
+                <span class="brand-name">SmartCart <strong>AI</strong></span>
+                <span class="badge-tag">Internship ML Edition</span>
+            </a>
+            <nav class="nav-links">
+                <a href="/" class="nav-item">Catalog & Recommender</a>
+                <a href="/eda" class="nav-item">EDA & Data Science</a>
+                <a href="/evaluation" class="nav-item">ML Evaluation</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="sub-banner">
+        <div class="container banner-content">
+            <div class="banner-left">
+                <span class="status-dot"></span>
+                <span>Active Dataset: <strong>{{ dataset_meta.source if dataset_meta else 'Auto-Discovered Catalog' }}</strong></span>
+                <span class="pill-info">{{ dataset_meta.record_count if dataset_meta else '40' }} Products</span>
+                {% if dataset_meta and dataset_meta.is_sample_data %}
+                    <span class="badge-sample">Included Sample Dataset</span>
+                {% else %}
+                    <span class="badge-public">Verified Repository</span>
+                {% endif %}
+            </div>
+            <div class="banner-right">
+                <span>Model: <strong>TF-IDF & Cosine Similarity</strong> (Scikit-Learn)</span>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <p>SmartCart AI – Data Science and Machine Learning-Based E-Commerce Product Recommendation System</p>
+            <p class="footer-sub">Designed as an internship project using Python, Pandas, Scikit-learn, and Flask.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_static_js or '/static/js/main.js' }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

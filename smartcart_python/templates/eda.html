@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container page-container">
+    <div class="page-header">
+        <span class="badge-tag">Exploratory Data Analysis</span>
+        <h1>Dataset & Feature Engineering Dashboard</h1>
+        <p class="subtitle">Statistical insights, missing value audits, and distribution metrics calculated using Pandas and NumPy.</p>
+    </div>
+
+    <!-- Overview Stat Cards -->
+    <div class="metrics-grid">
+        <div class="stat-card">
+            <span class="stat-label">Total Cleaned Records</span>
+            <span class="stat-value">{{ cleaning_report.final_rows }}</span>
+            <span class="stat-desc">{{ cleaning_report.duplicates_removed }} duplicates dropped</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Product Categories</span>
+            <span class="stat-value">{{ eda_stats.total_categories }}</span>
+            <span class="stat-desc">Distinct taxonomic classes</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Average Product Price</span>
+            <span class="stat-value">${{ eda_stats.price_metrics.mean }}</span>
+            <span class="stat-desc">Median: ${{ eda_stats.price_metrics.median }} (Range: ${{ eda_stats.price_metrics.min }} - ${{ eda_stats.price_metrics.max }})</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Avg Description Length</span>
+            <span class="stat-value">{{ eda_stats.text_metrics.mean_word_count }} words</span>
+            <span class="stat-desc">Max: {{ eda_stats.text_metrics.max_word_count }} words</span>
+        </div>
+    </div>
+
+    <!-- EDA Visual Breakdowns -->
+    <div class="eda-grid">
+        <!-- Category Distribution -->
+        <div class="panel">
+            <h3>Category Breakdown</h3>
+            <p class="panel-subtitle">Frequency of products per department.</p>
+            <div class="bar-chart-container">
+                {% for cat, count in eda_stats.category_distribution.items() %}
+                <div class="bar-row">
+                    <div class="bar-labels">
+                        <span class="bar-name">{{ cat }}</span>
+                        <span class="bar-count">{{ count }} items</span>
+                    </div>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: {{ (count / cleaning_report.final_rows * 100) | round }}%;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Price Distribution Summary -->
+        <div class="panel">
+            <h3>Price Quartiles & Distribution</h3>
+            <p class="panel-subtitle">Five-number summary computed via NumPy percentiles.</p>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Statistical Meaning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Minimum Price</td>
+                        <td><strong>${{ eda_stats.price_metrics.min }}</strong></td>
+                        <td>Floor entry-level accessory</td>
+                    </tr>
+                    <tr>
+                        <td>25th Percentile (Q1)</td>
+                        <td><strong>${{ eda_stats.price_metrics.q25 }}</strong></td>
+                        <td>25% of catalog is under this price</td>
+                    </tr>
+                    <tr>
+                        <td>Median (Q2)</td>
+                        <td><strong>${{ eda_stats.price_metrics.median }}</strong></td>
+                        <td>Robust central tendency</td>
+                    </tr>
+                    <tr>
+                        <td>75th Percentile (Q3)</td>
+                        <td><strong>${{ eda_stats.price_metrics.q75 }}</strong></td>
+                        <td>75% of catalog is under this price</td>
+                    </tr>
+                    <tr>
+                        <td>Maximum Price</td>
+                        <td><strong>${{ eda_stats.price_metrics.max }}</strong></td>
+                        <td>Premium flagship hardware</td>
+                    </tr>
+                    <tr>
+                        <td>Standard Deviation</td>
+                        <td><strong>${{ eda_stats.price_metrics.std }}</strong></td>
+                        <td>Catalog price dispersion</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Data Preprocessing Report -->
+    <div class="panel" style="margin-top: 1.5rem;">
+        <h3>Data Cleaning & Imputation Audit</h3>
+        <p class="panel-subtitle">Audited null counts in source dataset handled by preprocessor.py.</p>
+        <div class="imputation-tags">
+            {% for col, missing in cleaning_report.missing_values_handled.items() %}
+            <span class="tag-pill">
+                <strong>{{ col }}:</strong> {{ missing }} missing replaced with domain defaults
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

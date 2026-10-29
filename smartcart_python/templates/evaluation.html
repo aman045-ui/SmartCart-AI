@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container page-container">
+    <div class="page-header">
+        <span class="badge-accent">Machine Learning Evaluation</span>
+        <h1>Recommendation Quality & Scientific Audit</h1>
+        <p class="subtitle">Empirical evaluation metrics, proxy relevance ground truth, and qualitative explainability checks.</p>
+    </div>
+
+    <!-- Scientific Honesty Callout -->
+    <div class="callout-card">
+        <div class="callout-icon">⚖️</div>
+        <div>
+            <h4>Data Science Note on Recommendation Accuracy</h4>
+            <p>{{ evaluation.scientific_disclaimer }}</p>
+        </div>
+    </div>
+
+    <!-- Core Metrics Cards -->
+    <div class="metrics-grid">
+        <div class="stat-card">
+            <span class="stat-label">Precision@5 (Category Level)</span>
+            <span class="stat-value">{{ (evaluation.metrics.precision_at_k_category * 100) | round(1) }}%</span>
+            <span class="stat-desc">Proportion of top-5 items in matching domain</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Precision@5 (Subcategory Level)</span>
+            <span class="stat-value">{{ (evaluation.metrics.precision_at_k_subcategory * 100) | round(1) }}%</span>
+            <span class="stat-desc">Strict semantic sub-discipline alignment</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Catalog Coverage</span>
+            <span class="stat-value">{{ evaluation.metrics.catalog_coverage_percentage }}%</span>
+            <span class="stat-desc">Percent of catalog recommended at least once</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Intra-List Diversity (ILD)</span>
+            <span class="stat-value">{{ (evaluation.metrics.intra_list_diversity_score * 100) | round(1) }}%</span>
+            <span class="stat-desc">Dissimilarity among recommended items (1 - pairwise sim)</span>
+        </div>
+    </div>
+
+    <!-- Qualitative Sample Inspection -->
+    <div class="panel" style="margin-top: 1.5rem;">
+        <h3>Qualitative Recommendation Validation</h3>
+        <p class="panel-subtitle">Manual spot-check on test products showing recommendation outcomes and matching rationale.</p>
+
+        <div class="qualitative-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 28%;">Seed Test Product</th>
+                        <th style="width: 52%;">Generated Top Recommendations & TF-IDF Keywords</th>
+                        <th style="width: 20%;">Relevance Proxy Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for case in evaluation.qualitative_cases %}
+                    <tr>
+                        <td>
+                            <strong>{{ case.seed_product }}</strong>
+                        </td>
+                        <td>
+                            <ul class="rec-sublist">
+                                {% for r in case.top_recommendations %}
+                                <li>{{ r }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <span class="badge-success">{{ case.relevance_verdict }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Algorithm Architecture Summary -->
+    <div class="panel" style="margin-top: 1.5rem;">
+        <h3>Model Technical Architecture</h3>
+        <div class="tech-spec-grid">
+            <div class="spec-item">
+                <span class="spec-title">Feature Extraction</span>
+                <p>Scikit-learn <code>TfidfVectorizer</code> with 1-to-2 n-gram range and sublinear Term Frequency scaling: <code>tf_scaled = 1 + log(tf)</code>.</p>
+            </div>
+            <div class="spec-item">
+                <span class="spec-title">Similarity Formulation</span>
+                <p>Pairwise Cosine Similarity: <code>cos(u, v) = (u · v) / (||u|| ||v||)</code> across normalized sparse TF-IDF vectors.</p>
+            </div>
+            <div class="spec-item">
+                <span class="spec-title">Performance Optimization</span>
+                <p>Persistent vector matrix caching in memory to ensure sub-millisecond real-time retrieval without re-fitting per query.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

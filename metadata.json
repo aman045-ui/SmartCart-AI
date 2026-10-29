@@ -1,0 +1,8 @@
+{
+  "name": "SmartCart AI – E-Commerce ML Recommendation System",
+  "description": "Internship-grade Machine Learning and Data Science project featuring automated dataset ingestion, EDA visualizations, TF-IDF and Cosine Similarity content-based filtering, and proxy evaluation metrics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
